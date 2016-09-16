@@ -1,19 +1,30 @@
-{ "name" : "shippable-bbs-oauth"
-, "description" : "A fork of the oauth package that can talk to BitBucket Server"
-, "version" : "0.9.14"
-, "directories" : { "lib" : "./lib" }
-, "main" : "index.js"
-, "author" : "Ragesh Krishna <ragesh@shippable.com>"
-, "repository" : { "type":"git", "url":"http://github.com/rageshkrishna/node-oauth.git" }
-, "devDependencies": {
+{
+  "name": "shippable-bbs-oauth",
+  "description": "A fork of the `oauth` package",
+  "version": "0.9.17",
+  "directories": {
+    "lib": "./lib"
+  },
+  "main": "index.js",
+  "author": "Ragesh Krishna <ragesh@shippable.com>",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/rageshkrishna/shippable-oauth.git"
+  },
+  "devDependencies": {
     "vows": "0.5.x"
-  }
-, "scripts": {
+  },
+  "scripts": {
     "test": "make test"
-  }
-, "licenses" :
-  [ { "type" : "MIT"
-    , "url" : "http://github.com/ciaranj/node-oauth/raw/master/LICENSE"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/rageshkrishna/shippable-oauth/raw/master/LICENSE"
     }
-  ]
+  ],
+  "dependencies": {
+    "http-proxy-agent": "1.0.0",
+    "https-proxy-agent": "1.0.0"
+  }
 }
