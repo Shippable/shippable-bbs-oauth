@@ -74,6 +74,8 @@ describe('OAuth2',function(){
 
 Change History
 ==============
+* 0.9.19
+    - OAuth1:   Update delete function signature to accept content_type
 * 0.9.18
     - OAuth1:   Add support for no_proxy environment variable 
 * 0.9.17
