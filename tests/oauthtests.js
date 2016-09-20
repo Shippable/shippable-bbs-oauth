@@ -32,6 +32,68 @@ var RsaPublicKey = "-----BEGIN PUBLIC KEY-----\n" +
 "-----END PUBLIC KEY-----";
 
 vows.describe('OAuth').addBatch({
+    'When no_proxy is not defined': {
+      topic: new OAuth(null, null, null, null, null, null, "PLAINTEXT"),
+      '_skipProxy returns true': function(oa) {
+        var hostname = "foo.example.com";
+        var port = 80;
+        var noProxy = undefined;
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      }
+    },
+    'When no_proxy is defined': {
+      topic: new OAuth(null, null, null, null, null, null, "PLAINTEXT"),
+      '_skipProxy returns true for matching hostname': function(oa) {
+        var hostname = "foo.example.com";
+        var port = 80;
+        var noProxy = ".example.com";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns true for matching hostname and port': function(oa) {
+        var hostname = "foo.example.com";
+        var port = 443;
+        var noProxy = ".example.com:443";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns true for * no_proxy': function(oa) {
+        var hostname = "foo.example.com";
+        var port = 443;
+        var noProxy = "*";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+      '_skipProxy works with multiple zones': function(oa) {
+        var hostname = "foo.example.com";
+        var port = 443;
+        var noProxy = ".example.org,.example.com:443";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns false for mismatched hostname': function(oa) {
+        var hostname = "foo.example.in";
+        var port = 443;
+        var noProxy = ".example.org,.example.com:443";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, false);
+      },
+      '_skipProxy returns false for mismatched port': function(oa) {
+        var hostname = "foo.example.in";
+        var port = 443;
+        var noProxy = ".example.org,.example.com:80";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, false);
+      },
+      '_skipProxy works with IP addresses': function(oa) {
+        var hostname = "172.17.42.1";
+        var port = 443;
+        var noProxy = "172.17.42.1:443";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+    },
     'When newing OAuth': {
       topic: new OAuth(null, null, null, null, null, null, "PLAINTEXT"),
       'followRedirects is enabled by default': function (oa) {

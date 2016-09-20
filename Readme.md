@@ -74,6 +74,8 @@ describe('OAuth2',function(){
 
 Change History
 ==============
+* 0.9.18
+    - OAuth1:   Add support for no_proxy environment variable 
 * 0.9.17
     - OAuth1:   Add support for http proxies 
 * 0.9.14
