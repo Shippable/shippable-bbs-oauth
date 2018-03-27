@@ -1,7 +1,7 @@
 {
   "name": "shippable-bbs-oauth",
   "description": "A fork of the `oauth` package",
-  "version": "0.9.19",
+  "version": "0.9.20",
   "directories": {
     "lib": "./lib"
   },
@@ -9,7 +9,7 @@
   "author": "Ragesh Krishna <ragesh@shippable.com>",
   "repository": {
     "type": "git",
-    "url": "http://github.com/rageshkrishna/shippable-oauth.git"
+    "url": "https://github.com/Shippable/shippable-bbs-oauth.git"
   },
   "devDependencies": {
     "vows": "0.5.x"
@@ -20,7 +20,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/rageshkrishna/shippable-oauth/raw/master/LICENSE"
+      "url": "http://github.com/Shippable/shippable-bbs-oauth/raw/master/LICENSE"
     }
   ],
   "dependencies": {
