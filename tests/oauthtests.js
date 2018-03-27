@@ -34,30 +34,16 @@ var RsaPublicKey = "-----BEGIN PUBLIC KEY-----\n" +
 vows.describe('OAuth').addBatch({
     'When no_proxy is not defined': {
       topic: new OAuth(null, null, null, null, null, null, "PLAINTEXT"),
-      '_skipProxy returns true': function(oa) {
+      '_skipProxy returns false': function(oa) {
         var hostname = "foo.example.com";
         var port = 80;
         var noProxy = undefined;
         var skipProxy = oa._skipProxy(hostname, port, noProxy);
-        assert.equal(skipProxy, true);
+        assert.equal(skipProxy, false);
       }
     },
-    'When no_proxy is defined': {
+    'When no_proxy is defined without port': {
       topic: new OAuth(null, null, null, null, null, null, "PLAINTEXT"),
-      '_skipProxy returns true for matching hostname': function(oa) {
-        var hostname = "foo.example.com";
-        var port = 80;
-        var noProxy = ".example.com";
-        var skipProxy = oa._skipProxy(hostname, port, noProxy);
-        assert.equal(skipProxy, true);
-      },
-      '_skipProxy returns true for matching hostname and port': function(oa) {
-        var hostname = "foo.example.com";
-        var port = 443;
-        var noProxy = ".example.com:443";
-        var skipProxy = oa._skipProxy(hostname, port, noProxy);
-        assert.equal(skipProxy, true);
-      },
       '_skipProxy returns true for * no_proxy': function(oa) {
         var hostname = "foo.example.com";
         var port = 443;
@@ -65,33 +51,155 @@ vows.describe('OAuth').addBatch({
         var skipProxy = oa._skipProxy(hostname, port, noProxy);
         assert.equal(skipProxy, true);
       },
-      '_skipProxy works with multiple zones': function(oa) {
-        var hostname = "foo.example.com";
-        var port = 443;
-        var noProxy = ".example.org,.example.com:443";
+       '_skipProxy returns true for hostname match': function(oa) {
+        var hostname = "example.com";
+        var port = 80;
+        var noProxy = "example.com";
         var skipProxy = oa._skipProxy(hostname, port, noProxy);
         assert.equal(skipProxy, true);
       },
-      '_skipProxy returns false for mismatched hostname': function(oa) {
-        var hostname = "foo.example.in";
-        var port = 443;
-        var noProxy = ".example.org,.example.com:443";
-        var skipProxy = oa._skipProxy(hostname, port, noProxy);
-        assert.equal(skipProxy, false);
+      '_skipProxy returns false for hostname mismatch': function(oa) {
+       var hostname = "example.com";
+       var port = 80;
+       var noProxy = "ample.com";
+       var skipProxy = oa._skipProxy(hostname, port, noProxy);
+       assert.equal(skipProxy, false);
       },
-      '_skipProxy returns false for mismatched port': function(oa) {
-        var hostname = "foo.example.in";
-        var port = 443;
-        var noProxy = ".example.org,.example.com:80";
-        var skipProxy = oa._skipProxy(hostname, port, noProxy);
-        assert.equal(skipProxy, false);
-      },
-      '_skipProxy works with IP addresses': function(oa) {
-        var hostname = "172.17.42.1";
-        var port = 443;
-        var noProxy = "172.17.42.1:443";
+      '_skipProxy returns true for hostname match with multiple no_proxy defined': function(oa) {
+       var hostname = "example.com";
+       var port = 80;
+       var noProxy = "192.168.1.1,example.com,foo.com";
+       var skipProxy = oa._skipProxy(hostname, port, noProxy);
+       assert.equal(skipProxy, true);
+     },
+      '_skipProxy returns true for subdomain match': function(oa) {
+        var hostname = "www.example.com";
+        var port = 80;
+        var noProxy = "example.com";
         var skipProxy = oa._skipProxy(hostname, port, noProxy);
         assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns true for hostname match irrespective of case': function(oa) {
+        var hostname = "EXAMPLE.com";
+        var port = 80;
+        var noProxy = "eXaMpLe.cOm";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns true for hostname match with subdomains': function(oa) {
+        var hostname = "www.example.com";
+        var port = 80;
+        var noProxy = "www.example.com";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns false for hostname mismatch with subdomains': function(oa) {
+        var hostname = "help.example.com";
+        var port = 80;
+        var noProxy = "www.example.com";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, false);
+      },
+      '_skipProxy returns true for subdomain hostname match with subdomain in no_proxy': function(oa) {
+        var hostname = "really.long.example.com";
+        var port = 80;
+        var noProxy = "long.example.com";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns true for hostname match irrespective of port': function(oa) {
+        var hostname = "example.com";
+        var port = 9999;
+        var noProxy = "example.com";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns true for IP address hostname match ': function(oa) {
+        var hostname = "192.168.1.2";
+        var port = 80;
+        var noProxy = "192.168.1.2";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns true for IP address hostname match with multiple no_proxy defined': function(oa) {
+        var hostname = "192.168.1.2";
+        var port = 80;
+        var noProxy = "192.168.1.1,192.168.1.2,example.com";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns false for for IP address hostname mismatch': function(oa) {
+        var hostname = "192.168.1.20";
+        var port = 80;
+        var noProxy = "192.168.1.2";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, false);
+      },
+      '_skipProxy returns false for IP address hostname mismatch with multiple no_proxy defined': function(oa) {
+        var hostname = "192.168.1.20";
+        var port = 80;
+        var noProxy = "192.168.1.1,192.168.1.2,example.com";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, false);
+      }
+    },
+    'When no_proxy is defined with port': {
+      topic: new OAuth(null, null, null, null, null, null, "PLAINTEXT"),
+       '_skipProxy returns true for hostname, port match': function(oa) {
+        var hostname = "example.com";
+        var port = 80;
+        var noProxy = "example.com:80";
+        var skipProxy = oa._skipProxy(hostname, port, noProxy);
+        assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns false for hostname match, port mismatch': function(oa) {
+       var hostname = "example.com";
+       var port = 443;
+       var noProxy = "example.com:80";
+       var skipProxy = oa._skipProxy(hostname, port, noProxy);
+       assert.equal(skipProxy, false);
+      },
+      '_skipProxy returns true for hostname, port match with multiple no_proxy defined': function(oa) {
+       var hostname = "example.com";
+       var port = 80;
+       var noProxy = "example.com:80,foo.com";
+       var skipProxy = oa._skipProxy(hostname, port, noProxy);
+       assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns false for hostname, port mismatch with multiple no_proxy defined': function(oa) {
+       var hostname = "example.com";
+       var port = 443;
+       var noProxy = "example.com:80,foo.com";
+       var skipProxy = oa._skipProxy(hostname, port, noProxy);
+       assert.equal(skipProxy, false);
+      },
+      '_skipProxy returns true for IP address hostname, port match': function(oa) {
+      var hostname = "192.168.1.1";
+      var port = 80;
+      var noProxy = "192.168.1.1:80";
+      var skipProxy = oa._skipProxy(hostname, port, noProxy);
+      assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns false for IP address hostname match, port mismatch': function(oa) {
+       var hostname = "192.168.1.1";
+       var port = 443;
+       var noProxy = "192.168.1.1:80";
+       var skipProxy = oa._skipProxy(hostname, port, noProxy);
+       assert.equal(skipProxy, false);
+     },
+      '_skipProxy returns true for IP address hostname match, port match with multiple no_proxy defined': function(oa) {
+       var hostname = "192.168.1.1";
+       var port = 80;
+       var noProxy = "192.168.1.1:80,foo.com";
+       var skipProxy = oa._skipProxy(hostname, port, noProxy);
+       assert.equal(skipProxy, true);
+      },
+      '_skipProxy returns false for IP address hostname match, port mismatch with multiple no_proxy defined': function(oa) {
+       var hostname = "192.168.1.1";
+       var port = 443;
+       var noProxy = "192.168.1.1:80,foo.com";
+       var skipProxy = oa._skipProxy(hostname, port, noProxy);
+       assert.equal(skipProxy, false);
       },
     },
     'When newing OAuth': {
