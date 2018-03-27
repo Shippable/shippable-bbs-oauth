@@ -74,7 +74,7 @@ describe('OAuth2',function(){
 
 Change History
 ==============
-* 0.9.20
+* 0.9.21
     - OAuth1:   Fix handling of domain names in no_proxy
 * 0.9.19
     - OAuth1:   Update delete function signature to accept content_type

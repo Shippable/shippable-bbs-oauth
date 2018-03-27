@@ -1,7 +1,7 @@
 {
   "name": "shippable-bbs-oauth",
   "description": "A fork of the `oauth` package",
-  "version": "0.9.20",
+  "version": "0.9.21",
   "directories": {
     "lib": "./lib"
   },
