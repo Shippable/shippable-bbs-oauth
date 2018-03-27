@@ -7,3 +7,29 @@ build:
   ci:
     - npm install
     - npm test
+
+resources:
+  - name: shrivara_npm_token
+    type: integration
+    integration: shrivara_npm_token
+
+  - name: shippable-bbs-oauth_repo
+    type: gitRepo
+    integration: avinci_gh
+    versionTemplate:
+      sourceName: Shippable/shippable-bbs-oauth
+      branch: master
+
+jobs:
+  - name: publish_shippable-bbs-oauth
+    type: runSh
+    steps:
+      - IN: shippable-bbs-oauth_repo
+        switch: off
+      - IN: shrivara_npm_token
+        switch: off
+      - TASK:
+          script:
+            - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+            - pushd $(shipctl get_resource_state "shippable-bbs-oauth_repo")
+            - npm publish
