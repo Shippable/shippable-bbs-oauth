@@ -74,6 +74,8 @@ describe('OAuth2',function(){
 
 Change History
 ==============
+* 0.9.22
+    - OAuth1/2: Update proxy agent dependency versions
 * 0.9.21
     - OAuth1:   Fix handling of domain names in no_proxy
 * 0.9.19
