@@ -74,6 +74,8 @@ describe('OAuth2',function(){
 
 Change History
 ==============
+* 0.9.23
+    - OAuth1/2: Update https-proxy-agent dependency version
 * 0.9.22
     - OAuth1/2: Update proxy agent dependency versions
 * 0.9.21

@@ -1,7 +1,7 @@
 {
   "name": "shippable-bbs-oauth",
   "description": "A fork of the `oauth` package",
-  "version": "0.9.22",
+  "version": "0.9.23",
   "directories": {
     "lib": "./lib"
   },
@@ -25,7 +25,7 @@
   ],
   "dependencies": {
     "http-proxy-agent": "2.1.0",
-    "https-proxy-agent": "2.1.1",
+    "https-proxy-agent": "2.2.0",
     "underscore": "1.8.3"
   }
 }
